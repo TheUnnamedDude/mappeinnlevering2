@@ -51,18 +51,23 @@ public class PacketDecoder implements Runnable {
     public void run() {
         while (status.running()) {
             // TODO: Make this less complicated...
-            QueueEntry entry = packetQueue.poll();
-            if (entry == null)
-                continue;
             try {
-                entry.getPacket().handle(entry.getClient().getPacketHandler());
-            } catch (Exception e) {
-                e.printStackTrace();
+                QueueEntry entry = packetQueue.take();
+                if (entry == null)
+                    continue;
+
                 try {
-                    entry.getClient().close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    entry.getPacket().handle(entry.getClient().getPacketHandler());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    try {
+                        entry.getClient().close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
