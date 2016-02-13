@@ -65,7 +65,7 @@ public class ServerPacketHandler implements PacketHandler {
             err("No handshake received");
             return;
         }
-        if (lastQuestionId <= questions.size()) {
+        if (lastQuestionId < questions.size()) {
             Question question = questions.get(lastQuestionId);
             client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion()));
         } else {

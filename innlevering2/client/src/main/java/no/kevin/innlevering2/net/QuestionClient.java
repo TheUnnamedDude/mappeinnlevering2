@@ -1,9 +1,8 @@
-package no.kevin.innlevering2;
+package no.kevin.innlevering2.net;
 
 import lombok.RequiredArgsConstructor;
-import no.kevin.innlevering2.net.Client;
-import no.kevin.innlevering2.net.PacketDecoder;
-import no.kevin.innlevering2.net.PacketHandler;
+import no.kevin.innlevering2.ConsoleReader;
+import no.kevin.innlevering2.Status;
 import no.kevin.innlevering2.net.packets.HandshakePacket;
 import no.kevin.innlevering2.net.packets.NextQuestionPacket;
 
@@ -16,32 +15,28 @@ import java.nio.channels.SocketChannel;
 @RequiredArgsConstructor
 public class QuestionClient implements Runnable, Status {
     private final String name;
-    private final InetAddress host;
-    private final int port;
+    private final InetSocketAddress address;
+    private final ClientPacketHandler packetHandler;
+    private PacketDecoder packetDecoder;
 
-    private ByteBuffer buffer = ByteBuffer.allocate(8192);
     private Client client;
     private SocketChannel channel;
-    private PacketDecoder packetDecoder;
-    private QuestionClientPacketHandler packetHandler = new QuestionClientPacketHandler();
+    private boolean running = true;
 
-    public void connect() throws IOException {
+    public void connect(PacketDecoder packetDecoder) throws IOException {
         channel = SocketChannel.open();
-        channel.connect(new InetSocketAddress(host, port));
+        channel.connect(address);
         client = new Client(channel, packetHandler);
         client.sendPacket(new HandshakePacket(name));
         client.sendPacket(new NextQuestionPacket());
-        packetDecoder = new PacketDecoder(this);
-        new Thread(packetDecoder).start();
+        this.packetDecoder = packetDecoder;
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (running()) {
             try {
-                buffer.clear();
-                channel.read(buffer);
-                packetDecoder.decode(buffer, packetHandler);
+                packetDecoder.decode(channel, client);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -50,11 +45,16 @@ public class QuestionClient implements Runnable, Status {
 
     @Override
     public boolean running() {
-        return true;
+        return running && channel.isConnected();
     }
 
     @Override
     public void shutdown() {
-
+        running = false;
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

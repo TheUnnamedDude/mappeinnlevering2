@@ -27,7 +27,6 @@ public class ConnectionHandler implements Runnable, Status {
     private boolean running = true;
     private Selector selector;
     private ServerSocketChannel serverChannel;
-    private ByteBuffer buffer = ByteBuffer.allocate(8192); // 8KB should be enough for this
 
     private HashMap<SocketChannel, Client> sessions = new HashMap<>();
 
@@ -60,16 +59,10 @@ public class ConnectionHandler implements Runnable, Status {
     }
 
     public void read(SelectionKey key) throws IOException {
-        buffer.clear();
+
         SocketChannel channel = (SocketChannel) key.channel();
-        int length = channel.read(buffer);
 
-        if (length == -1) {
-            channel.close();
-            return;
-        }
-
-        packetDecoder.decode(buffer, sessions.get(channel).getPacketHandler());
+        packetDecoder.decode(channel, sessions.get(channel));
     }
 
     public void handleKey(SelectionKey key) {
