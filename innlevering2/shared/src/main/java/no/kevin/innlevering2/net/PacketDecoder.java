@@ -9,16 +9,16 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor
 public class PacketDecoder implements Runnable {
     private final Status status;
-    private final Queue<QueueEntry> packetQueue = new LinkedList<>();
+    private final BlockingQueue<QueueEntry> packetQueue = new LinkedBlockingQueue<>();
     private ByteBuffer buffer = ByteBuffer.allocate(8192); // 8KB should be enough for this
-    private ReentrantLock lock = new ReentrantLock();
-    private Condition hasItems = lock.newCondition();
 
     public void decode(SocketChannel channel, Client client) throws IOException {
         buffer.clear();
@@ -44,40 +44,25 @@ public class PacketDecoder implements Runnable {
         if (packetLength != buffer.position()) {
             throw new IOException("Stream corrupt, expected a packet with size " + packetLength + " got " + buffer.remaining());
         }
-
-        lock.lock();
-        try {
-            packetQueue.add(new QueueEntry(packet, client));
-            hasItems.signal();
-        } finally {
-            lock.unlock();
-        }
+        packetQueue.add(new QueueEntry(packet, client));
     }
 
     @Override
     public void run() {
         while (status.running()) {
-            lock.lock();
             // TODO: Make this less complicated...
+            QueueEntry entry = packetQueue.poll();
+            if (entry == null)
+                continue;
             try {
-                hasItems.await();
-                while (!packetQueue.isEmpty()) {
-                    QueueEntry entry = packetQueue.poll();
-                    try {
-                        entry.getPacket().handle(entry.getClient().getPacketHandler());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        try {
-                            entry.getClient().close();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            } catch (InterruptedException e) {
+                entry.getPacket().handle(entry.getClient().getPacketHandler());
+            } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                lock.unlock();
+                try {
+                    entry.getClient().close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
