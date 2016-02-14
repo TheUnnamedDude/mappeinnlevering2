@@ -26,7 +26,7 @@ public class QuestionClient implements Runnable, Status {
     public void connect(PacketDecoder packetDecoder) throws IOException {
         channel = SocketChannel.open();
         channel.connect(address);
-        client = new Client(channel, packetHandler);
+        client = new Client(channel, channel.getRemoteAddress(), packetHandler);
         client.sendPacket(new HandshakePacket(name));
         client.sendPacket(new NextQuestionPacket());
         this.packetDecoder = packetDecoder;

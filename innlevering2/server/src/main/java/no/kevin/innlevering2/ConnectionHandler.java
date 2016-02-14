@@ -51,7 +51,7 @@ public class ConnectionHandler implements Runnable, Status {
     public void accept(SelectionKey key) throws IOException {
         ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
         SocketChannel channel = serverChannel.accept();
-        sessions.put(channel, new Client(channel, new ServerPacketHandler(questions)));
+        sessions.put(channel, new Client(channel, channel.getRemoteAddress(), new ServerPacketHandler(questions)));
         System.out.println("ACCEPT");
 
         channel.configureBlocking(false);

@@ -55,7 +55,7 @@ public class ServerPacketHandler implements PacketHandler {
 
     @Override
     public void handle(ErrorPacket packet) throws IOException {
-        logger.info(String.format("Client <%s> disconnected: %s", client.getClient().getRemoteAddress(), packet.getMessage()));
+        logger.info(String.format("Client <%s> disconnected: %s", client.getAddress(), packet.getMessage()));
         client.close();
     }
 

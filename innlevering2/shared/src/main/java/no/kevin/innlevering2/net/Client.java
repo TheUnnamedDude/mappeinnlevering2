@@ -4,21 +4,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.ByteChannel;
 
-@Getter
 public class Client {
-    private final SocketChannel client;
+    private final ByteChannel channel;
+    @Getter
     private final PacketHandler packetHandler;
+    @Getter
+    private final SocketAddress address;
     private ByteBuffer buffer = ByteBuffer.allocate(8192);
 
+    @Getter
     @Setter
     private String name;
 
-    public Client(SocketChannel client, PacketHandler packetHandler) {
-        this.client = client;
+    public Client(ByteChannel channel, SocketAddress address, PacketHandler packetHandler) {
+        this.channel = channel;
         this.packetHandler = packetHandler;
+        this.address = address;
         packetHandler.setClient(this);
     }
 
@@ -35,10 +40,15 @@ public class Client {
         buffer.putInt(PacketMapping.getIdByPacket(packet.getClass()));
 
         buffer.position(0);
-        client.write(buffer);
+        channel.write(buffer);
     }
 
     public void close() throws IOException {
-        client.close();
+        channel.close();
+    }
+
+    @Override
+    public String toString() {
+        return "Client(" + name + ") with the address " + getAddress();
     }
 }

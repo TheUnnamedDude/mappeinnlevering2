@@ -5,7 +5,7 @@ import no.kevin.innlevering2.net.packets.*;
 import java.util.HashMap;
 
 public class PacketMapping {
-    public static PacketSupplier[] ID_TO_PACKET_MAP = new PacketSupplier[6];
+    private static PacketSupplier[] ID_TO_PACKET_MAP = new PacketSupplier[6];
 
     private static HashMap<Class<? extends Packet>, Integer> PACKET_TO_ID_MAP = new HashMap<>();
 
@@ -24,9 +24,13 @@ public class PacketMapping {
     }
 
     public static Packet getPacketById(int packetId) {
-        if (packetId >= ID_TO_PACKET_MAP.length)
+        if (packetId >= ID_TO_PACKET_MAP.length || packetId < 0)
             return null;
         return ID_TO_PACKET_MAP[packetId].newPacket();
+    }
+
+    public static int getMaxPacketId() {
+        return ID_TO_PACKET_MAP.length;
     }
 
     public static int getIdByPacket(Class<? extends Packet> cl) {

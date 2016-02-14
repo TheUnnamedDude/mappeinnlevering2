@@ -6,13 +6,9 @@ import no.kevin.innlevering2.Status;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor
 public class PacketDecoder implements Runnable {
@@ -20,7 +16,7 @@ public class PacketDecoder implements Runnable {
     private final BlockingQueue<QueueEntry> packetQueue = new LinkedBlockingQueue<>();
     private ByteBuffer buffer = ByteBuffer.allocate(8192); // 8KB should be enough for this
 
-    public void decode(SocketChannel channel, Client client) throws IOException {
+    public void decode(ReadableByteChannel channel, Client client) throws IOException {
         buffer.clear();
 
         int length = channel.read(buffer);
@@ -37,7 +33,7 @@ public class PacketDecoder implements Runnable {
 
         Packet packet = PacketMapping.getPacketById(packetId);
         if (packet == null) {
-            throw new IOException("Unknown packet questionId " + packetId);
+            throw new IOException("Unknown packet id " + packetId);
         }
 
         packet.read(buffer);
@@ -60,13 +56,9 @@ public class PacketDecoder implements Runnable {
                     entry.getPacket().handle(entry.getClient().getPacketHandler());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    try {
-                        entry.getClient().close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    entry.getClient().close();
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
         }
