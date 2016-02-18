@@ -38,7 +38,7 @@ public class PacketDecoder implements Runnable {
 
         packet.read(buffer);
         if (packetLength != buffer.position()) {
-            throw new IOException("Stream corrupt, expected a packet with size " + packetLength + " got " + buffer.remaining());
+            throw new IOException("Stream corrupt, expected a packet with size " + packetLength + " got " + buffer.position());
         }
         packetQueue.add(new QueueEntry(packet, client));
     }
@@ -46,7 +46,6 @@ public class PacketDecoder implements Runnable {
     @Override
     public void run() {
         while (status.running()) {
-            // TODO: Make this less complicated...
             try {
                 QueueEntry entry = packetQueue.take();
                 if (entry == null)

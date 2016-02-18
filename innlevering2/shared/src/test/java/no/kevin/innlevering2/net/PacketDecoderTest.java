@@ -1,6 +1,7 @@
 package no.kevin.innlevering2.net;
 
 import no.kevin.innlevering2.Status;
+import no.kevin.innlevering2.net.packets.HandshakePacket;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,8 +44,48 @@ public class PacketDecoderTest {
         packetDecoder.decode(channel, client);
     }
 
-    @Test
-    public void testRun() throws Exception {
+    @Test(expected = IOException.class)
+    public void testExceptionOnWrongPacketSize() throws Exception {
+        when(channel.read(any(ByteBuffer.class))).then(answer -> {
+            ByteBuffer arg = answer.getArgumentAt(0, ByteBuffer.class);
+            arg.putInt(16);
+            arg.putInt(0);
+            new HandshakePacket("tests").write(arg);
+            return 20;
+        });
+        packetDecoder.decode(channel, client);
+    }
 
+    private void sampleHeaderPacket() throws Exception {
+        when(channel.read(any(ByteBuffer.class))).then(answer -> {
+            ByteBuffer arg = answer.getArgumentAt(0, ByteBuffer.class);
+            arg.putInt(16);
+            arg.putInt(0);
+            new HandshakePacket("test").write(arg);
+            return 20;
+        });
+    }
+
+    @Test(timeout = 1000L)
+    public void testRunExecutePacketManager() throws Exception {
+        PacketHandler packetHandler = mock(PacketHandler.class);
+        when(client.getPacketHandler()).thenReturn(packetHandler);
+        sampleHeaderPacket();
+        packetDecoder.decode(channel, client);
+        when(status.running()).thenReturn(true, false);
+        packetDecoder.run();
+        verify(packetHandler, times(1)).handle(any(HandshakePacket.class));
+    }
+
+    @Test
+    public void testClientClosedOnPacketManagerException() throws Exception {
+        PacketHandler packetHandler = mock(PacketHandler.class);
+        when(client.getPacketHandler()).thenReturn(packetHandler);
+        doThrow(mock(IOException.class)).when(packetHandler).handle(any(HandshakePacket.class));
+        sampleHeaderPacket();
+        packetDecoder.decode(channel, client);
+        when(status.running()).thenReturn(true, false);
+        packetDecoder.run();
+        verify(client, times(1)).close();
     }
 }
