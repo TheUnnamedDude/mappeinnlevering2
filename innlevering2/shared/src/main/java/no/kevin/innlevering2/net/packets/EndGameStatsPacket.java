@@ -1,7 +1,7 @@
 package no.kevin.innlevering2.net.packets;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import no.kevin.innlevering2.net.Packet;
 import no.kevin.innlevering2.net.PacketHandler;
@@ -10,25 +10,22 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 @AllArgsConstructor
-@Data
+@Getter
 @NoArgsConstructor
-public class QuestionPacket implements Packet {
-    private int questionId;
-    private String question;
-    private String allowedAnswersRegex;
+public class EndGameStatsPacket implements Packet {
+    private int correctAnswers;
+    private int totalQuestions;
 
     @Override
     public void read(ByteBuffer in) throws IOException {
-        questionId = in.getInt();
-        question = readString(in);
-        allowedAnswersRegex = readString(in);
+        correctAnswers = in.getInt();
+        totalQuestions = in.getInt();
     }
 
     @Override
     public void write(ByteBuffer out) throws IOException {
-        out.putInt(questionId);
-        writeString(question, out);
-        writeString(allowedAnswersRegex, out);
+        out.putInt(correctAnswers);
+        out.putInt(totalQuestions);
     }
 
     @Override

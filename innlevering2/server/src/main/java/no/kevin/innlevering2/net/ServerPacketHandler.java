@@ -48,7 +48,7 @@ public class ServerPacketHandler implements PacketHandler {
             err("Question questionId mismatch");
             return;
         }
-        boolean correct = packet.getAnswer().equalsIgnoreCase(questions.get(lastQuestionId).getAnswer());
+        boolean correct = questions.get(lastQuestionId).getAnswerRegex().matcher(packet.getAnswer().toLowerCase()).matches();
         client.sendPacket(new QuestionResultPacket(lastQuestionId, correct));
         lastQuestionId ++;
     }
@@ -67,7 +67,7 @@ public class ServerPacketHandler implements PacketHandler {
         }
         if (lastQuestionId < questions.size()) {
             Question question = questions.get(lastQuestionId);
-            client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion()));
+            client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion(), question.getPossibleAnswerRegex().pattern()));
         } else {
             err("No more questions!");
         }
@@ -76,6 +76,11 @@ public class ServerPacketHandler implements PacketHandler {
     @Override
     public void handle(QuestionResultPacket packet) throws IOException {
         err("Cannot send a question result to the server");
+    }
+
+    @Override
+    public void handle(EndGameStatsPacket packet) throws IOException {
+        err("Cannot send a end game stats packet to the server");
     }
 
     private void err(String message) throws IOException {

@@ -13,4 +13,5 @@ public interface PacketHandler {
     void handle(ErrorPacket packet) throws IOException;
     void handle(NextQuestionPacket packet) throws IOException;
     void handle(QuestionResultPacket packet) throws IOException;
+    void handle(EndGameStatsPacket packet) throws IOException;
 }

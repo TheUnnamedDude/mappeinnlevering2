@@ -22,7 +22,7 @@ public class ClientPacketHandler implements PacketHandler {
     @Override
     public void handle(QuestionPacket packet) throws IOException {
         System.out.println("Got question!!");
-        String answer = consoleReader.readLine(packet.getQuestion(), "y", "n", "yes", "no");
+        String answer = consoleReader.readLine(packet.getQuestion(), packet.getAllowedAnswersRegex());
         client.sendPacket(new AnswerPacket(packet.getQuestionId(), answer));
     }
 
@@ -47,5 +47,11 @@ public class ClientPacketHandler implements PacketHandler {
     public void handle(QuestionResultPacket packet) throws IOException {
         System.out.println(packet);
         client.sendPacket(new NextQuestionPacket());
+    }
+
+    @Override
+    public void handle(EndGameStatsPacket packet) throws IOException {
+
+        client.close();
     }
 }

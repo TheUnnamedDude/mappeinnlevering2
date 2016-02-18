@@ -5,7 +5,7 @@ import no.kevin.innlevering2.net.packets.*;
 import java.util.HashMap;
 
 public class PacketMapping {
-    private static PacketSupplier[] ID_TO_PACKET_MAP = new PacketSupplier[6];
+    private static PacketSupplier[] ID_TO_PACKET_MAP = new PacketSupplier[7];
 
     private static HashMap<Class<? extends Packet>, Integer> PACKET_TO_ID_MAP = new HashMap<>();
 
@@ -20,7 +20,8 @@ public class PacketMapping {
         registerPacket(2, AnswerPacket::new);
         registerPacket(3, QuestionResultPacket::new);
         registerPacket(4, NextQuestionPacket::new);
-        registerPacket(5, ErrorPacket::new);
+        registerPacket(5, EndGameStatsPacket::new);
+        registerPacket(6, ErrorPacket::new);
     }
 
     public static Packet getPacketById(int packetId) {

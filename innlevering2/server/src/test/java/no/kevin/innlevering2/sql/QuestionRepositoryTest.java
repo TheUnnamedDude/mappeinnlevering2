@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -38,10 +39,17 @@ public class QuestionRepositoryTest {
 
     @Test
     public void testMapper() throws Exception {
-        when(resultSet.getInt(eq("questionId"))).thenReturn(1);
+        when(resultSet.getInt(eq("id"))).thenReturn(1);
+        when(resultSet.getString(eq("display_possible_answer"))).thenReturn("Yes/No");
         when(resultSet.getString(eq("question"))).thenReturn("Is this working?");
-        when(resultSet.getString(eq("answer"))).thenReturn("Yes");
-        assertEquals(new Question(1, "Is this working?", "Yes"), repository.getById(1));
+        when(resultSet.getString(eq("correct_regex"))).thenReturn("yes");
+        when(resultSet.getString(eq("allowed_regex"))).thenReturn("yes|no");
+        Question question = repository.getById(1);
+        assertEquals(1, question.getId());
+        assertEquals("Is this working?", question.getQuestion());
+        assertEquals("Yes/No", question.getPossibleAnswerDisplayText());
+        assertEquals("yes|no", question.getPossibleAnswerRegex().pattern());
+        assertEquals("yes", question.getAnswerRegex().pattern());
     }
 
     @Test
@@ -62,7 +70,12 @@ public class QuestionRepositoryTest {
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
         ArrayList<Question> questions = repository.getAllQuestions();
         assertEquals(3, questions.size());
-        assertEquals(new Question(123, "filler", "filler"), questions.get(0));
+        Question question = questions.get(0);
+        assertEquals(123, question.getId());
+        assertEquals("filler", question.getQuestion());
+        assertEquals("filler", question.getPossibleAnswerDisplayText());
+        assertEquals("filler", question.getPossibleAnswerRegex().pattern());
+        assertEquals("filler", question.getAnswerRegex().pattern());
     }
 
     @Test

@@ -13,7 +13,7 @@ public class QuestionPacketTest {
 
     @Test
     public void testPacketSerialization() throws Exception {
-        Packet packet = new QuestionPacket(123, "fisk");
+        Packet packet = new QuestionPacket(123, "fisk", "yes");
         ByteBuffer buffer = ByteBuffer.allocate(8192);
         packet.write(buffer);
         Packet read = new QuestionPacket();
@@ -25,7 +25,7 @@ public class QuestionPacketTest {
     @Test
     public void testHandle() throws Exception {
         PacketHandler packetHandler = mock(PacketHandler.class);
-        QuestionPacket packet = new QuestionPacket(123, "fisk");
+        QuestionPacket packet = new QuestionPacket(123, "fisk", "yes");
         packet.handle(packetHandler);
         verify(packetHandler).handle(eq(packet));
     }

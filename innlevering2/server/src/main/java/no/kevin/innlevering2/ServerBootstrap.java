@@ -17,7 +17,7 @@ public class ServerBootstrap {
             e.printStackTrace();
         }
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/unittest", "unittest", "unittestpassword")) {
-            QuestionRepository questionRepository = new QuestionRepository(connection, "questions");
+            QuestionRepository questionRepository = new QuestionRepository(connection, "question_db");
             ArrayList<Question> questions = questionRepository.getAllQuestions();
             ConnectionHandler connectionHandler = new ConnectionHandler(null, 9876, questions);
             connectionHandler.initSelector();

@@ -3,6 +3,7 @@ package no.kevin.innlevering2;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ConsoleReader {
     BufferedReader in;
@@ -12,13 +13,13 @@ public class ConsoleReader {
         this.out = out;
     }
 
-    public String readLine(String prompt, String... allowedInput) {
-        out.print(prompt);
+    public String readLine(String prompt, String allowedRegex) {
         try {
-            List<String> allowed = Arrays.asList(allowedInput);
+            Pattern allowed = Pattern.compile(allowedRegex);
             String line;
             while (true) {
-                if (allowed.contains(line = in.readLine())) {
+                out.print(prompt + " ");
+                if (allowed.matcher(line = in.readLine()).matches()) {
                     return line;
                 }
             }
