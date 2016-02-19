@@ -53,6 +53,7 @@ public class QuestionClient implements Runnable, Status {
         running = false;
         try {
             client.close();
+            //TODO: Use non-blocking nio, currently a AsynchronousCloseException is thrown because the channel gets closed from another thread
         } catch (IOException e) {
             e.printStackTrace();
         }

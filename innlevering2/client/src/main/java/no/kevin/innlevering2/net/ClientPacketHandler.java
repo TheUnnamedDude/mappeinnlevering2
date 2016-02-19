@@ -51,7 +51,7 @@ public class ClientPacketHandler implements PacketHandler {
 
     @Override
     public void handle(EndGameStatsPacket packet) throws IOException {
-
+        System.out.println(packet);
         client.close();
     }
 }

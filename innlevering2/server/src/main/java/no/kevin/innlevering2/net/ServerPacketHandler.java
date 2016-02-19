@@ -16,6 +16,7 @@ public class ServerPacketHandler implements PacketHandler {
     private Client client;
     private int lastQuestionId;
     private boolean hasHandshaked = false;
+    private int correctAnswers;
 
     @Override
     public void setClient(Client client) {
@@ -49,6 +50,9 @@ public class ServerPacketHandler implements PacketHandler {
             return;
         }
         boolean correct = questions.get(lastQuestionId).getAnswerRegex().matcher(packet.getAnswer().toLowerCase()).matches();
+        if (correct) {
+            correctAnswers ++;
+        }
         client.sendPacket(new QuestionResultPacket(lastQuestionId, correct));
         lastQuestionId ++;
     }
@@ -69,7 +73,8 @@ public class ServerPacketHandler implements PacketHandler {
             Question question = questions.get(lastQuestionId);
             client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion(), question.getPossibleAnswerRegex().pattern()));
         } else {
-            err("No more questions!");
+            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId));
+            client.close();
         }
     }
 

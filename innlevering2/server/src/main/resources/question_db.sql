@@ -8,4 +8,5 @@ CREATE TABLE question_db(
 );
 INSERT INTO question_db(question, display_possible_answer, correct_regex, allowed_regex) VALUES('Does this work?', 'yes/no', 'y(es)?|j', 'y(es)?|j|no?');
 INSERT INTO question_db(question, display_possible_answer, correct_regex, allowed_regex) VALUES('Are you sure?', 'yes/no', 'no?', 'y(es)?|j|no?');
+INSERT INTO question_db(question, display_possible_answer, correct_regex, allowed_regex) VALUES('Hvem har skrevet GUNS, GERMS AND STEEL?', '', 'diamond, jared', '.+');
 SELECT * FROM question_db;

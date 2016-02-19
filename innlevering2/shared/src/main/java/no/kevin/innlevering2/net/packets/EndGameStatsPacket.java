@@ -1,7 +1,7 @@
 package no.kevin.innlevering2.net.packets;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.kevin.innlevering2.net.Packet;
 import no.kevin.innlevering2.net.PacketHandler;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 @AllArgsConstructor
-@Getter
+@Data
 @NoArgsConstructor
 public class EndGameStatsPacket implements Packet {
     private int correctAnswers;
