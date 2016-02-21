@@ -6,10 +6,14 @@ import no.kevin.innlevering2.ConsoleReader;
 import no.kevin.innlevering2.net.packets.*;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class ClientPacketHandler implements PacketHandler {
     private final ConsoleReader consoleReader;
+    private static final Pattern YES_PATTERN = Pattern.compile("y(es)?|ja?");
+    private static final String CONTINUE_PROMPT = "Vil du fortsette? j(a)/n(ei)";
+    private static final String ALTERNATIVES_PATTERN = "ja?|y(es)?|no?|nei";
 
     @Setter
     private Client client;
@@ -21,7 +25,6 @@ public class ClientPacketHandler implements PacketHandler {
 
     @Override
     public void handle(QuestionPacket packet) throws IOException {
-        System.out.println("Got question!!");
         String answer = consoleReader.readLine(packet.getQuestion(), packet.getAllowedAnswersRegex());
         client.sendPacket(new AnswerPacket(packet.getQuestionId(), answer));
     }
@@ -45,13 +48,16 @@ public class ClientPacketHandler implements PacketHandler {
 
     @Override
     public void handle(QuestionResultPacket packet) throws IOException {
-        System.out.println(packet);
-        client.sendPacket(new NextQuestionPacket());
+        System.out.println(packet.isCorrect() ? "Riktig!" : "Feil.");
+        boolean sendNext = YES_PATTERN.matcher(consoleReader.readLine(CONTINUE_PROMPT, ALTERNATIVES_PATTERN)).matches();
+        client.sendPacket(new NextQuestionPacket(sendNext));
     }
 
     @Override
     public void handle(EndGameStatsPacket packet) throws IOException {
-        System.out.println(packet);
+        System.out.println("Resultater:");
+        System.out.println(String.format("Riktige svar: %d/%d", packet.getCorrectAnswers(), packet.getTotalQuestions()));
+        System.out.println(String.format("Tid brukt: %.2f sekunder", (float)packet.getTimeElapsed() / 1000.0));
         client.close();
     }
 }

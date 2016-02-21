@@ -15,20 +15,20 @@ import java.nio.ByteBuffer;
 public class EndGameStatsPacket implements Packet {
     private int correctAnswers;
     private int totalQuestions;
-    private int timeTaken;
+    private int timeElapsed;
 
     @Override
     public void read(ByteBuffer in) throws IOException {
         correctAnswers = in.getInt();
         totalQuestions = in.getInt();
-        timeTaken = in.getInt();
+        timeElapsed = in.getInt();
     }
 
     @Override
     public void write(ByteBuffer out) throws IOException {
         out.putInt(correctAnswers);
         out.putInt(totalQuestions);
-        out.putInt(timeTaken);
+        out.putInt(timeElapsed);
     }
 
     @Override

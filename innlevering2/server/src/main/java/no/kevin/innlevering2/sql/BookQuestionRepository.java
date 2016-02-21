@@ -30,7 +30,6 @@ public class BookQuestionRepository extends BaseSQLRepository {
                 .map(BookQuestionRepository::quote)
                 .collect(Collectors.joining());
         Pattern correctAnswer = Pattern.compile(authorPattern + ".*");
-        System.out.println(correctAnswer);
         return new Question(id, "Hvem har skrevet \"" + tittel + "\"?", "", Pattern.compile(".+"), correctAnswer);
     }
 

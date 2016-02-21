@@ -6,18 +6,21 @@ import no.kevin.innlevering2.net.packets.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class ServerPacketHandler implements PacketHandler {
     private final ArrayList<Question> questions;
     private final Logger logger = Logger.getLogger("server");
+    private final static Random RANDOM = new Random();
 
     private Client client;
     private int lastQuestionId;
     private boolean hasHandshaked = false;
     private int correctAnswers;
-    private long started;
+    private long lastQuestion;
+    private int timeElapsed;
 
     @Override
     public void setClient(Client client) {
@@ -30,7 +33,6 @@ public class ServerPacketHandler implements PacketHandler {
             err("Handshake packet already received");
             return;
         }
-        started = System.currentTimeMillis();
         client.setName(packet.getName());
         logger.info("Client connected with name " + client.getName());
         hasHandshaked = true;
@@ -56,7 +58,7 @@ public class ServerPacketHandler implements PacketHandler {
             correctAnswers ++;
         }
         client.sendPacket(new QuestionResultPacket(lastQuestionId, correct));
-        lastQuestionId ++;
+        timeElapsed = (int) (System.currentTimeMillis() - lastQuestion);
     }
 
     @Override
@@ -71,11 +73,13 @@ public class ServerPacketHandler implements PacketHandler {
             err("No handshake received");
             return;
         }
-        if (lastQuestionId < questions.size()) {
+        if (packet.wantsMore()) {
+            lastQuestionId = RANDOM.nextInt(questions.size());
             Question question = questions.get(lastQuestionId);
             client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion(), question.getPossibleAnswerRegex().pattern()));
+            lastQuestion = System.currentTimeMillis();
         } else {
-            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId, (int) (System.currentTimeMillis() - started)));
+            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId, timeElapsed));
             client.close();
         }
     }

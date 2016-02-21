@@ -28,7 +28,7 @@ public class QuestionClient implements Runnable, Status {
         channel.connect(address);
         client = new Client(channel, channel.getRemoteAddress(), packetHandler);
         client.sendPacket(new HandshakePacket(name));
-        client.sendPacket(new NextQuestionPacket());
+        client.sendPacket(new NextQuestionPacket(true));
         this.packetDecoder = packetDecoder;
     }
 
