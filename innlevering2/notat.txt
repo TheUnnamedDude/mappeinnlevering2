@@ -1,0 +1,9 @@
+#Forutseninger for å kjøre løsningen
+ - JDK 1.8
+ - Maven
+ - PC
+#Ting som kunne vært forbedret
+ - Flere threads for deserialisere pakker async
+ - Flere tester, spessielt for server og klient
+ - Gradle, må bare lære meg å bruke det
+ - Rydde opp i pakkehåndtering

@@ -21,6 +21,7 @@ public class ServerPacketHandler implements PacketHandler {
     private int correctAnswers;
     private long lastQuestion;
     private int timeElapsed;
+    private int questionsAsked;
 
     @Override
     public void setClient(Client client) {
@@ -58,7 +59,7 @@ public class ServerPacketHandler implements PacketHandler {
             correctAnswers ++;
         }
         client.sendPacket(new QuestionResultPacket(lastQuestionId, correct));
-        timeElapsed = (int) (System.currentTimeMillis() - lastQuestion);
+        timeElapsed += (int) (System.currentTimeMillis() - lastQuestion);
     }
 
     @Override
@@ -78,8 +79,9 @@ public class ServerPacketHandler implements PacketHandler {
             Question question = questions.get(lastQuestionId);
             client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion(), question.getPossibleAnswerRegex().pattern()));
             lastQuestion = System.currentTimeMillis();
+            questionsAsked ++;
         } else {
-            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId, timeElapsed));
+            client.sendPacket(new EndGameStatsPacket(correctAnswers, questionsAsked, timeElapsed));
             client.close();
         }
     }
