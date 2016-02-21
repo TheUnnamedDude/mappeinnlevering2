@@ -2,7 +2,6 @@ package no.kevin.innlevering2;
 
 import no.kevin.innlevering2.entity.Question;
 import no.kevin.innlevering2.sql.BookQuestionRepository;
-import no.kevin.innlevering2.sql.QuestionRepository;
 import no.kevin.innlevering2.sql.Repository;
 
 import java.io.IOException;

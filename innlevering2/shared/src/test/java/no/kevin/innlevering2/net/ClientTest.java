@@ -4,12 +4,9 @@ import no.kevin.innlevering2.net.packets.HandshakePacket;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
-import java.nio.channels.SocketChannel;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

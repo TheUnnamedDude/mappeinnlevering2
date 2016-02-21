@@ -1,15 +1,12 @@
 package no.kevin.innlevering2.net;
 
 import lombok.RequiredArgsConstructor;
-import no.kevin.innlevering2.ConsoleReader;
 import no.kevin.innlevering2.Status;
 import no.kevin.innlevering2.net.packets.HandshakePacket;
 import no.kevin.innlevering2.net.packets.NextQuestionPacket;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 @RequiredArgsConstructor

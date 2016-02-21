@@ -6,10 +6,9 @@ import org.junit.Test;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class QuestionRepositoryTest {
     private ResultSet resultSet;

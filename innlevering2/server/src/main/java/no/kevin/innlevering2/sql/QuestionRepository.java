@@ -3,10 +3,8 @@ package no.kevin.innlevering2.sql;
 import no.kevin.innlevering2.entity.Question;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class QuestionRepository extends BaseSQLRepository {

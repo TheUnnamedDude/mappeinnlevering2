@@ -1,8 +1,8 @@
 package no.kevin.innlevering2;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.regex.Pattern;
 
 public class ConsoleReader {

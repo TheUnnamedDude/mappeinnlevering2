@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 public class PacketDecoderTest {
     ReadableByteChannel channel;
