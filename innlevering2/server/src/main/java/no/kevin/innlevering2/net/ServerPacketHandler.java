@@ -17,6 +17,7 @@ public class ServerPacketHandler implements PacketHandler {
     private int lastQuestionId;
     private boolean hasHandshaked = false;
     private int correctAnswers;
+    private long started;
 
     @Override
     public void setClient(Client client) {
@@ -29,6 +30,7 @@ public class ServerPacketHandler implements PacketHandler {
             err("Handshake packet already received");
             return;
         }
+        started = System.currentTimeMillis();
         client.setName(packet.getName());
         logger.info("Client connected with name " + client.getName());
         hasHandshaked = true;
@@ -73,7 +75,7 @@ public class ServerPacketHandler implements PacketHandler {
             Question question = questions.get(lastQuestionId);
             client.sendPacket(new QuestionPacket(lastQuestionId, question.getQuestion(), question.getPossibleAnswerRegex().pattern()));
         } else {
-            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId));
+            client.sendPacket(new EndGameStatsPacket(correctAnswers, lastQuestionId, (int) (System.currentTimeMillis() - started)));
             client.close();
         }
     }

@@ -9,56 +9,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class QuestionRepository {
-    private final String selectAll;
-    private final String selectWhereId;
-    private final String selectSize;
-    private final Connection con;
+public class QuestionRepository extends BaseSQLRepository {
 
     public QuestionRepository(Connection con, String dbName) {
-        this.con = con;
-        this.selectAll = "SELECT * FROM " + dbName + ";";
-        this.selectWhereId = "SELECT * FROM " + dbName + " WHERE ID=?;";
-        this.selectSize = "SELECT count(*) as size FROM " + dbName + ";";
+        super(con, "SELECT * FROM " + dbName + ";",
+                "SELECT * FROM " + dbName + " WHERE ID=?;",
+                "SELECT count(*) as size FROM " + dbName + ";");
     }
 
-    public Question getById(int id) {
-        try (PreparedStatement preparedStatement = con.prepareStatement(selectWhereId)) {
-            preparedStatement.setInt(1, id);
-            ResultSet result = preparedStatement.executeQuery();
-            if (result.next()) {
-                return mapSql(result);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ArrayList<Question> getAllQuestions() {
-        ArrayList<Question> result = new ArrayList<>();
-        try (ResultSet resultSet = con.createStatement().executeQuery(selectAll)) {
-            while (resultSet.next()) {
-                result.add(mapSql(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public int getSize() {
-        try (ResultSet resultSet = con.createStatement().executeQuery(selectSize)) {
-            if (resultSet.next()) {
-                return resultSet.getInt("size");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    private Question mapSql(ResultSet resultSet) throws SQLException {
+    @Override
+    public Question mapSql(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         String question = resultSet.getString("question");
         Pattern allowed_regex = Pattern.compile(resultSet.getString("allowed_regex"));

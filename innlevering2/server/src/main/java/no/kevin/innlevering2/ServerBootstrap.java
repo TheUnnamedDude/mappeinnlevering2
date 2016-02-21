@@ -1,7 +1,9 @@
 package no.kevin.innlevering2;
 
 import no.kevin.innlevering2.entity.Question;
+import no.kevin.innlevering2.sql.BookQuestionRepository;
 import no.kevin.innlevering2.sql.QuestionRepository;
+import no.kevin.innlevering2.sql.Repository;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -17,7 +19,8 @@ public class ServerBootstrap {
             e.printStackTrace();
         }
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/unittest", "unittest", "unittestpassword")) {
-            QuestionRepository questionRepository = new QuestionRepository(connection, "question_db");
+            Repository questionRepository = new BookQuestionRepository(connection, "pg4100innlevering2");
+            //Repository questionRepository = new QuestionRepository(connection, "question_db");
             ArrayList<Question> questions = questionRepository.getAllQuestions();
             ConnectionHandler connectionHandler = new ConnectionHandler(null, 9876, questions);
             connectionHandler.initSelector();
