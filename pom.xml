@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>innlevering2</module>
+        <module>innlevering3</module>
     </modules>
     <packaging>pom</packaging>
 
