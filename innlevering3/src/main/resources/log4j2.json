@@ -1,0 +1,54 @@
+{
+  "Configuration": {
+    "Appenders": {
+      "Console": {
+        "name": "Console",
+        "target": "SYSTEM_OUT"
+      },
+      "RollingFile": [
+        {
+          "name": "ErrorLog",
+          "filename": "target/log/exceptions.log",
+          "filePattern": "target/log/exception.%i.log",
+          "SizeBasedTriggeringPolicy": {
+            "size": "20MB"
+          }
+        },
+        {
+          "name": "RequestLog",
+          "filename": "target/log/requests.log",
+          "filePattern": "target/log/request.%i.log",
+          "SizeBasedTriggeringPolicy": {
+            "size": "20MB"
+          }
+        }
+      ]
+    },
+    "Loggers": {
+      "Root": {
+        "level": "INFO",
+        "AppenderRef": {
+          "ref": "Console"
+        }
+      },
+      "Logger": [
+        {
+          "additivity": "false",
+          "name": "no.kevin.innlevering3.controllers.ExceptionHandlerController",
+          "level": "ALL",
+          "AppenderRef": {
+            "ref": "ErrorLog"
+          }
+        },
+        {
+          "additivity": "false",
+          "name": "no.kevin.innlevering3.controllers",
+          "level": "INFO",
+          "AppenderRef": {
+            "ref": "RequestLog"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -2,5 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean name="primeChecker" class="no.kevin.innlevering3.math.ApacheMathPrimeChecker" />
+    <bean name="textFormatter" class="no.kevin.innlevering3.TextFormatter" />
+    <bean name="primeChecker" class="no.kevin.innlevering3.math.ApacheMathHelper" />
+    <bean name="templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="cacheable" value="false" />
+    </bean>
 </beans>

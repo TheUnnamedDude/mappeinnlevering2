@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Check a prime number</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+<div class="content">
+    <form method="POST">
+        <input type="number" id="number" name="number" placeholder="Test number..." />
+        <input type="submit" id="submit" value="Check number" />
+    </form>
+    <div id="result" th:if="${result != T(no.kevin.innlevering3.math.PrimeResult).NO_INPUT}">
+        <h3 th:text="${textFormatter.formatPrimeResult(number, result)}"></h3>
+    </div>
+</div>
+</body>
+</html>
