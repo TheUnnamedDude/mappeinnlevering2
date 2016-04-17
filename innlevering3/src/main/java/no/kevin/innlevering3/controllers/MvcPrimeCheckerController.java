@@ -12,6 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Takes any requests from a normal browser and redirects it to a thymeleaf document
+ */
 @Controller
 public class MvcPrimeCheckerController {
     private final Logger requestLogger = LogManager.getLogger(MvcPrimeCheckerController.class);
@@ -21,6 +24,13 @@ public class MvcPrimeCheckerController {
     @Autowired
     private TextFormatter textFormatter;
 
+    /**
+     * Handles any http request from a normal browser requesting a html document
+     * @param number A {@link String} representing the number passed by the browser
+     * @param request Used for logging the ip address and other http related things in the access log
+     * @return a {@link ModelAndView} object with information about the number, result and a text formatter to format
+     *  the number passed, should probably be formatted in the controller instead.
+     */
     @RequestMapping(value="/primecheck", produces="text/html")
     public ModelAndView checkPrimeNumber(@RequestParam(value="number",required=false) String number, HttpServletRequest request) {
         requestLogger.info(String.format("[%s] %s: %s, number=\"%s\"", request.getRemoteAddr(), request.getMethod(), request.getRequestURL(), number));

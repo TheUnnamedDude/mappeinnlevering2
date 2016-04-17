@@ -21,9 +21,21 @@ can be configured in locale.properties). Everything is started in the PrimeWebAp
 ## ExceptionHandlerController
 The ExceptionHandlerController is a very simple controller that logs any Throwable caught and logs it.
 
+# Log4j2
+Log4j2 is configured with three loggers, a root logger that catches everything Spring spits out, the root logger is
+configured to catch any messages with a higher level then INFO. There is a logger which catches all logged messages with
+a level higher then ERROR from the ExceptionHandlerController and writes them to a rolling file named "exception.log".
+The third logger logs every http request to the mapped http paths and adds additional useful info and writes them to a
+rolling file named "access.log". Both of the rolling file loggers does not write anything to the parent loggers.
+
 # Tests
 I only have tests for the Math logic as the rest of the code doesnt have any real logic behind it and almost only rely
 on spring magic
+
+# Maven site configuration
+I've set up maven site to only generate the things that are relevant for this project, this makes the site generation
+time way shorter. I wanted to use markdown as I think its a better syntax then the "Almost plain text"(APT) maven uses
+by default and it comes with a side-by-side editor for IntelliJ so I can see the result without bulding the entire site.
 
 # Requirements
 * Java 1.8
@@ -37,5 +49,13 @@ a full Java EE server running you can just run the command ```mvn spring-boot:ru
 
 If you want to build the entire project with javadoc and maven-site you can issue the command ```mvn clean package site```
 
+To generate a javadoc jar append "javadoc:jar to the command"
+
 # Generating javadoc and maven site
 To generate the javadoc and maven site execute the goal "site" with the command ```mvn clean site```
+
+# Sources
+* https://maven.apache.org/plugins/maven-javadoc-plugin/
+* https://maven.apache.org/plugins/maven-site-plugin/
+* https://maven.apache.org/skins/
+* https://docs.spring.io/spring-boot/docs/current/reference/html/howto-logging.html#howto-configure-log4j-for-logging

@@ -6,6 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 
+/**
+ * This class is supposed to start the SpringBoot application for usage as a standalone java program
+ */
 @SpringBootApplication
 @EnableAutoConfiguration
 @ImportResource("classpath:applicationContext.xml")

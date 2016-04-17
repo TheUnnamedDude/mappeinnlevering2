@@ -15,7 +15,7 @@
     <packaging>war</packaging>
 
     <organization>
-        <name>None</name>
+        <name>TheUnnamedDude</name>
         <url>https://github.com/TheUnnamedDude</url>
     </organization>
 
@@ -118,11 +118,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.5</version>
             </plugin>
         </plugins>
     </build>
