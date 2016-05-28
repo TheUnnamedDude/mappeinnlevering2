@@ -14,3 +14,9 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.6'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'no.kevin.innlevering1.CarRentalApp'
+    }
+}
