@@ -60,4 +60,17 @@ public class CarCarRentalAppTest
 
         assertEquals("name1", carRentalApp.readCustomerInfo().getName());
     }
+
+    @Test
+    public void testParseDelay() throws Exception {
+        carRentalApp.parseArgs("--delay", "1000");
+        when(readerMock.readLine()).thenReturn("name1");
+        Customer customer = carRentalApp.readCustomerInfo();
+        assertEquals(1000, customer.getRandomInterval(0));
+    }
+
+    @Test
+    public void testReturnsFalseWithFailedDelayParsing() throws Exception {
+        assertFalse(carRentalApp.parseArgs("--delay"));
+    }
 }

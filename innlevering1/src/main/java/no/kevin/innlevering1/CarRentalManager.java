@@ -61,7 +61,6 @@ public class CarRentalManager {
             if (car != null) {
                 return car;
             }
-            System.err.println("Sleepin'");
             try {
                 carReceived.await();
             } catch (InterruptedException e) {

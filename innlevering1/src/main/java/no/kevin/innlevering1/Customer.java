@@ -39,9 +39,16 @@ public class Customer implements Runnable {
 
     public void randomWaitTime(int maxWait) {
         try {
-            Thread.sleep(fixedSleepInterval == 0 ? (RNG.nextInt(maxWait) + 1) * 1000 : fixedSleepInterval);
+            Thread.sleep(getRandomInterval(maxWait));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    long getRandomInterval(int maxWait) {
+        if (fixedSleepInterval == 0) {
+            return (RNG.nextInt(maxWait) + 1) * 1000;
+        }
+        return fixedSleepInterval;
     }
 }

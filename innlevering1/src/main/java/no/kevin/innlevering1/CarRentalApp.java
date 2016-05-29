@@ -7,7 +7,7 @@ import java.util.logging.*;
 
 public class CarRentalApp
 {
-    private Logger logger = Logger.getLogger("Rental_service");
+    private static Logger logger = Logger.getLogger("Rental_service");
     private int fixedDelay = 0;
     private BufferedReader reader;
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -26,7 +26,7 @@ public class CarRentalApp
                 return;
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Failed to find the provided file.");
+            logger.info("Failed to find the provided file.");
             printHelp();
             return;
         }
@@ -44,11 +44,11 @@ public class CarRentalApp
         for (int i = 0; i < args.length; i++) { // The reason for not using streams is because I want to be able to skip values.
             final String arg = args[i].toLowerCase();
             if ("--delay".equals(arg)) {
-                if (args.length < i + 1)
+                if (args.length <= i + 1)
                     return false;
                 fixedDelay = Integer.parseInt(args[++i]);
             } else if ("--file".equals(arg)) {
-                if (args.length < i + 1)
+                if (args.length <= i + 1)
                     return false;
                 reader = new BufferedReader(new FileReader(args[++i]));
             } else if ("--help".equals(arg)) {
