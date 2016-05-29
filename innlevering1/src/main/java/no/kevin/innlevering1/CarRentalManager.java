@@ -1,6 +1,7 @@
 package no.kevin.innlevering1;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -8,8 +9,8 @@ import java.util.stream.Collectors;
 public class CarRentalManager {
     private final static String RENTED_FORMAT = "%s har leid %s.";
     private final static String RETURNED_FORMAT = "%s har levert inn %s.";
-    private final static String NO_AVAILABLE_CAR_FORMAT = "%s prøvde å leie en bil, men det var ingen ledige.";
     private final ReentrantLock lock = new ReentrantLock();
+    private final Condition carReceived = lock.newCondition();
 
     private Logger logger;
     private ArrayList<Car> carsForRent = new ArrayList<>();
@@ -25,15 +26,11 @@ public class CarRentalManager {
         try {
             Car car = findCar();
 
-            if (car == null) {
-                logger.info(String.format(NO_AVAILABLE_CAR_FORMAT, customer.getName()));
-            } else {
-                car.setRented(true);
-                leasingInfo.put(car, customer);
+            car.setRented(true);
+            leasingInfo.put(car, customer);
 
-                logger.info(String.format(RENTED_FORMAT, customer.getName(), car.getLicenseNumber()));
-                printLeasingInfo();
-            }
+            logger.info(String.format(RENTED_FORMAT, customer.getName(), car.getLicenseNumber()));
+            printLeasingInfo();
 
             return car;
         } finally {
@@ -50,15 +47,27 @@ public class CarRentalManager {
             logger.info(String.format(RETURNED_FORMAT, customer.getName(), car.getLicenseNumber()));
             printLeasingInfo();
         } finally {
+            carReceived.signal();
             lock.unlock();
         }
     }
 
     private Car findCar() {
-        return carsForRent.stream()
-                .filter(car -> !car.isRented())
-                .findFirst()
-                .orElse(null);
+        while (true) {
+            Car car = carsForRent.stream()
+                    .filter(c -> !c.isRented())
+                    .findFirst()
+                    .orElse(null);
+            if (car != null) {
+                return car;
+            }
+            System.err.println("Sleepin'");
+            try {
+                carReceived.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void printLeasingInfo() {

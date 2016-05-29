@@ -19,20 +19,28 @@ public class CarRentalManagerTest {
     private Customer customer;
 
     @Test
-    public void testConstructor() {
+    public void testConstructor() throws Exception {
         CarRentalManager carRentalManager = new CarRentalManager(logger, defaultCar);
         assertEquals(defaultCar, carRentalManager.lease(customer));
     }
 
-    @Test
-    public void testReturnNullIfNoAvailableCars() {
+    @Test(timeout = 1500)
+    public void testTurningInIfNoAvailableCars() throws Exception {
         CarRentalManager carRentalManager = new CarRentalManager(logger, defaultCar);
         assertEquals(defaultCar, carRentalManager.lease(customer));
-        assertNull(carRentalManager.lease(customer));
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                carRentalManager.turnIn(defaultCar);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        assertNotNull(carRentalManager.lease(customer));
     }
 
     @Test
-    public void testMultipleCars() {
+    public void testMultipleCars() throws Exception {
         Car[] cars = new Car[] { defaultCar, new Car("HJ22222"),
                 new Car("HJ333333"), new Car("HJ444444"), new Car("HJ55555") };
         Customer customer = mock(Customer.class);
@@ -42,11 +50,10 @@ public class CarRentalManagerTest {
         assertNotNull(carRentalManager.lease(customer));
         assertNotNull(carRentalManager.lease(customer));
         assertNotNull(carRentalManager.lease(customer));
-        assertNull(carRentalManager.lease(customer));
     }
 
     @Test
-    public void testTurningIn() {
+    public void testTurningIn() throws Exception {
         CarRentalManager carRentalManager = new CarRentalManager(logger, defaultCar);
         carRentalManager.lease(customer);
         carRentalManager.turnIn(defaultCar);
@@ -54,7 +61,7 @@ public class CarRentalManagerTest {
     }
 
     @Test
-    public void testSetRentedAfterLeasing() {
+    public void testSetRentedAfterLeasing() throws Exception {
         CarRentalManager carRentalManager = new CarRentalManager(logger, defaultCar);
         carRentalManager.lease(customer);
         assertTrue(defaultCar.isRented());
