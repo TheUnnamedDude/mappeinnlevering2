@@ -5,9 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
 
-public class CarRentalApp
-{
-    private static Logger logger = Logger.getLogger("Rental_service");
+public class CarRentalApp {
+    private Logger logger = Logger.getLogger("Rental_service");
     private int fixedDelay = 0;
     private BufferedReader reader;
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -20,8 +19,12 @@ public class CarRentalApp
 
     public static void main(String[] args) {
         CarRentalApp rentalService = new CarRentalApp();
+        rentalService.start(args);
+    }
+
+    public void start(String... args) {
         try {
-            if (!rentalService.parseArgs(args)) {
+            if (!parseArgs(args)) {
                 printHelp();
                 return;
             }
@@ -30,7 +33,7 @@ public class CarRentalApp
             printHelp();
             return;
         }
-        rentalService.start();
+        waitForUsers();
     }
 
     public CarRentalApp() {
@@ -58,7 +61,7 @@ public class CarRentalApp
         return true;
     }
 
-    public void start() {
+    public void waitForUsers() {
         if (reader == null) {
             logger.fine("No input provided, defaulting to System.in");
             reader = new BufferedReader(new InputStreamReader(System.in));
@@ -92,11 +95,11 @@ public class CarRentalApp
         return new Customer(name, carRentalManager, fixedDelay);
     }
 
-    public static void printHelp() {
+    public void printHelp() {
         System.out.println("java -jar <jarfile> [--help] [--delay <delay in seconds>] [--file <file>]");
     }
 
-    private class ConsoleFormatter extends Formatter {
+    static class ConsoleFormatter extends Formatter {
         @Override
         public String format(LogRecord record) {
             return "[" + record.getLevel() + "] " +  record.getMessage() + "\n";
